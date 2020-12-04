@@ -1,0 +1,183 @@
+import random
+import FonctionEval as fe
+
+#création de la grille 10*20
+Grille =[]
+for i in range(24):     #4 cases de plus en bas et à droite pour les indices et tests de placement
+    Ligne=[0 for i in range(14)]
+    Grille.append(Ligne)
+    Ligne=[]
+    
+def init(grille): #permet d'avoir une grille nulle à partir grille modifiée
+    for i in range(len(grille)):
+        for j in range(14):
+            if grille[i][j]!=0:
+                grille[i][j]=0
+    return grille
+
+#Définiton des pièces :
+
+Escalier1=[[(0,1,0,0),(0,1,1,0),(0,0,1,0),(0,0,0,0)],#<-1ere position->0 1 0 0
+           [(0,0,0,0),(0,0,1,1),(0,1,1,0),(0,0,0,0)],#<-2eme           0 1 1 0 
+           [(0,1,0,0),(0,1,1,0),(0,0,1,0),(0,0,0,0)],#<-3eme           0 0 1 0 
+           [(0,0,0,0),(0,0,1,1),(0,1,1,0),(0,0,0,0)]]#<-4eme           0 0 0 0
+Carré = [[(0,2,2,0),(0,2,2,0),(0,0,0,0),(0,0,0,0)],         # 0 2 2 0
+          [(0,2,2,0),(0,2,2,0),(0,0,0,0),(0,0,0,0)],        # 0 2 2 0
+          [(0,2,2,0),(0,2,2,0),(0,0,0,0),(0,0,0,0)],        # 0 0 0 0
+          [(0,2,2,0),(0,2,2,0),(0,0,0,0),(0,0,0,0)]]        # 0 0 0 0
+
+Ligne = [[(0,3,0,0),(0,3,0,0),(0,3,0,0),(0,3,0,0)],        # 0 3 0 0
+         [(3,3,3,3),(0,0,0,0),(0,0,0,0),(0,0,0,0)],        # 0 3 0 0
+         [(0,3,0,0),(0,3,0,0),(0,3,0,0),(0,3,0,0)],        # 0 3 0 0
+         [(3,3,3,3),(0,0,0,0),(0,0,0,0),(0,0,0,0)]]        # 0 3 0 0
+
+Escalier2= [[(0,0,4,0),(0,4,4,0),(0,4,0,0),(0,0,0,0)],        # 0 0 4 0
+            [(0,0,0,0),(0,4,4,0),(0,0,4,4),(0,0,0,0)],        # 0 4 4 0
+            [(0,0,4,0),(0,4,4,0),(0,4,0,0),(0,0,0,0)],        # 0 4 0 0
+            [(0,0,0,0),(0,4,4,0),(0,0,4,4),(0,0,0,0)]]        # 0 0 0 0
+
+Chateau = [[(0,5,0,0),(0,5,5,0),(0,5,0,0),(0,0,0,0)],     # 0 5 0 0
+           [(0,0,0,0),(0,0,5,0),(0,5,5,5),(0,0,0,0)],     # 0 5 5 0
+           [(0,0,0,5),(0,0,5,5),(0,0,0,5),(0,0,0,0)],     # 0 5 0 0
+           [(0,5,5,5),(0,0,5,0),(0,0,0,0),(0,0,0,0)]]     # 0 0 0 0
+
+L1= [[(0,0,6,0),(0,0,6,0),(0,6,6,0),(0,0,0,0)],     # 0 0 6 0
+     [(0,0,0,0),(0,6,6,6),(0,0,0,6),(0,0,0,0)],     # 0 0 6 0
+     [(0,6,6,0),(0,6,0,0),(0,6,0,0),(0,0,0,0)],     # 0 6 6 0
+     [(0,0,0,0),(0,6,0,0),(0,6,6,6),(0,0,0,0)]]     # 0 0 0 0
+
+L2 = [[(0,7,0,0),(0,7,0,0),(0,7,7,0),(0,0,0,0)],     # 0 7 0 0
+      [(0,0,0,0),(0,0,0,7),(0,7,7,7),(0,0,0,0)],     # 0 7 0 0
+      [(0,7,7,0),(0,0,7,0),(0,0,7,0),(0,0,0,0)],     # 0 7 7 0
+      [(0,0,0,0),(0,7,7,7),(0,7,0,0),(0,0,0,0)]]     # 0 0 0 0                                             
+
+
+Table_pièces=[L1,L2,Escalier1,Escalier2,Chateau,Ligne,Carré]
+
+
+#pièce au hasard = Table_pièces[random.randint(0,6)]
+
+Lignes=0
+
+
+def poser(pièce,grille,ligne,colonne,sens):
+    if ligne==0:    #terminaison de while not
+        
+        return grille
+    h=len(grille)-fe.hauteur(grille)-4
+    if colonne==8:                      #test d'extrémité pour bien placer pièces peu importe le sens
+        listecolonnes=[]
+        for lignepièce in range(4):
+            for colonnepièce in range(4):
+                if pièce[sens][lignepièce][colonnepièce] !=0:
+                    listecolonnes.append((colonnepièce))
+        maxcolonne=max(listecolonnes)
+        
+        if maxcolonne==3:
+            colonne=7
+        if maxcolonne==2:
+            colonne=8
+        if maxcolonne==1:
+            colonne=9
+    if colonne==0:                          #pareil test d'extrémité
+        listecolonnes=[]
+        for lignepièce in range(4):
+            for colonnepièce in range(4):
+                if pièce[sens][lignepièce][colonnepièce] !=0:
+                    listecolonnes.append((colonnepièce))
+        maxcolonne=min(listecolonnes)
+        if maxcolonne==0:
+            colonne=1
+            
+                
+    if est_libre(pièce,grille,ligne,colonne,sens):  #on teste si yalaplace si oui on pose la pièce sinon rien
+        for i in range(4):
+            for j in range(4):
+                if  grille[ligne+i][colonne+j]==0:
+                    grille[ligne+i][colonne+j]=pièce[sens][i][j]
+                if pièce[i][j]==0 and grille[ligne+i][colonne+j]!=0:
+                    grille[ligne+i][colonne+j]=pièce[sens][i][j]
+    else:
+        while not est_libre(pièce,grille,ligne,colonne,sens): #poser pièce au dessus
+            return poser(pièce,grille,ligne-1,colonne,sens)
+        
+    global zozo 
+    zozo=annule_et_remplace(h,grille)
+    
+    return grille
+
+
+
+def annule_et_remplace(hauteur,grille):
+    nbre_de_lignes_virées=0
+    for ligne in range(hauteur,20):       #on vire les lignes remplies
+        indice_pour_virer_ligne=0
+        for j in range(11):
+            if grille[ligne][j]!=0:
+                indice_pour_virer_ligne+=1
+            
+        if indice_pour_virer_ligne==10:
+            global Lignes
+            Lignes+=1
+            nbre_de_lignes_virées+=1
+            grille[ligne]=[0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+            for i in range(ligne,0,-1):         #on descend les lignes restantes non nulles
+                grille[i]=grille[i-1]
+    return nbre_de_lignes_virées    #utilisé pour érosion
+
+
+    
+
+
+
+
+
+
+
+
+def est_libre(pièce,grille,ligne,colonne,sens):#i = indice ligne en haut à gauche pièce, j colonne à droite
+    for i in range(4):
+        for j in range(4):
+            if pièce[sens][i][j]!=0 and grille[ligne+i][colonne+j]!=0: #Test par rapport aux pièces déjà placées
+                return False
+            if pièce[sens][i][j]!=0 and colonne+j>=11: #Test par rapport mur de droite
+                return False
+            if pièce[sens][i][j]!=0 and ligne+i>=20:
+                return False
+    return True
+    
+def jouer(pièce,grille):
+    ''' poser pièces--> tester chaque colonne et sur chaque colonne chaque sens, calculer éval et prendre la + mieux'''
+    évaluations=[]      #sous la forme : (coeff éval,colonne qui vérifie,sens qui vérifie)
+    if pièce==Ligne:    #parce que ya un pb d'indice avec cette pièce
+        for colonne in range(8):
+            for i in range(3):
+                grille_temporaire=[row[:] for row in grille]   #on créé une grille intermédiaire pour tester les positions sans toucher à Grille
+            
+                poser(pièce,grille_temporaire,19,colonne,i)
+                évaluations.append((fe.fonction_éval(grille_temporaire),colonne,i))
+    
+    else:
+        for colonne in range(9):
+            for i in range(3):
+                grille_temporaire=[row[:] for row in grille]
+            
+                poser(pièce,grille_temporaire,19,colonne,i)
+                évaluations.append((fe.fonction_éval(grille_temporaire),colonne,i))
+    print(évaluations)  #Pour voir
+    Plusgrand=max(évaluations)  
+    print(Plusgrand)  #Pour voir
+    poser(pièce,grille,19,Plusgrand[1],Plusgrand[2])
+    return grille
+
+def jeux(n,grille):  #n pièces placées sur la Grille en fonction du score de la combinaison obtenue
+   
+    for i in range(n):
+        
+        pièce=Table_pièces[random.randint(0,6)]
+        print(pièce)
+        jouer(pièce,grille)
+        print(Lignes)
+    return grille
+
+   
