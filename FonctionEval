@@ -1,0 +1,73 @@
+
+def fonction_éval(grille):
+    return -hauteur(grille)-transiligne(grille)-transicolonne(grille)-4*trous(grille)-puits(grille)
+
+
+
+
+
+def hauteur(grille):
+    ''' Hauteur où la dernière pièce a été posée'''  #retourne plutôt hauteur max atteinte par les pièces
+    for (numéro_ligne,ligne) in enumerate(grille):
+        for case in ligne:
+            if case !=0:
+                return len(grille)-numéro_ligne-4 #puisqu'on a compté depuis le haut de la grille et que ya 4 cases de plus
+    return 0
+        
+def érosion(grille_avant,grille_maintenant):        #à faire
+    ''' nbre de lignes virées*nbre de cases virées de la
+    dernière pièce'''
+    pass
+    
+    
+    
+def transiligne(grille):
+    ''' Nbre de transitions case vide/case pleine sur chaque ligne/ on retourne la somme de toutes ?'''
+    #parcourir chque ligne de grille et regarder si case(i)!=case(i+1)
+    nbretransi=0
+    h=len(grille)-hauteur(grille)-4
+    for i in range(h,20):
+        for j in range(10):
+            if (grille[i][j]!=0 and grille[i][j+1]==0) or (grille[i][j]==0 and grille[i][j+1]!=0):
+                nbretransi+=1
+    return nbretransi//2
+    
+    
+    
+def transicolonne(grille):
+    '''nbre de transitions case vide/case pleine sur chaque colonne'''
+    nbretransi=0
+    h=len(grille)-hauteur(grille)-4
+    for i in range(h,19): #compare 18 et 19 en dernier
+        for j in range(11): #s'arrête colonne 10
+            if (grille[i][j]!=0 and grille[i+1][j]==0) or (grille[i][j]==0 and grille[i+1][j]!=0):
+                nbretransi+=1
+    return nbretransi//2
+    
+    
+    
+def trous(grille):
+    ''' nbre cases vides recouvertes de au moins une case pleine'''
+    #parcourir chaque ligne puis regarder élément du dessus pour 
+    #toutes les cases ==0 éventuellement commencer à h
+    trous=0
+    h=len(grille)-hauteur(grille)-4
+    for ligne in range(h,19):
+        for colonne in range(11):
+            if grille[ligne][colonne]!=0 and grille[ligne+1][colonne]==0:
+               trous+=1
+    
+    return trous
+
+
+def puits(grille):
+    ''' sommer nbre cases vides au sein d'un puits'''
+    #regarder si c'est puits ie encadré par deux cases pleines
+    #et après sommer nbre de cases pour ce puits
+    puits=0
+    h=len(grille)-hauteur(grille)-4
+    for ligne in range(h,20):
+        for colonne in range(1,12):
+            if (grille[ligne][colonne-1]!=0 or colonne==0) and grille[ligne][colonne]==0 and (grille[ligne][colonne+1]!=0 or colonne==11):
+                puits+=1
+    return puits      
